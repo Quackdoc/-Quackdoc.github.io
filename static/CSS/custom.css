@@ -219,3 +219,16 @@
     margin-top: 0.5em;
     margin-bottom: 0em;
   }
+
+
+
+
+@media screen and (max-width: 760px){
+  html, body {
+    margin: 0;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+  }
+  
+}
