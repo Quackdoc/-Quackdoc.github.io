@@ -8,9 +8,10 @@ tags = ["Linux", "Android", "Operating Systems"]
 categories = ["Tech Showcase"]
 +++
 
-# Bliss OS and why you may actually care about it.
-
 Why on earth would someone want to install android on their PC? It's a question I get asked a lot lately. To be fair, it's not hard to understand why it would be asked, it's not as if people have a lot of exposure to android outside of the small spy device they lug around daily. There are actually a good few reasons to use android apps, and hopefully this will be able to showcase some of the benefits of ax86's continued development efforts. 
+
+<!-- more -->
+
 
 ## Tablet and "Touch Primary" devices.
 
