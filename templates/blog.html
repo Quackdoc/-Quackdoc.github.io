@@ -13,34 +13,37 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
       <!-- open gragh stuff-->>
-      <title>{% block title %}{{ config.title }}{% endblock title %}</title>
-      <!--meta name="og:title" content="{{ config.title }}" /-->
+      
       <meta name="og:site_name" content="Quackdoc's Blog" />
       <meta property="og:url" content="https://quackdoc.github.io/" />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="Quackdoc's Blog" />
     {%if section.title%}
       <title>{{ section.title }}</title>
-      <meta name="og:title" content="{{ section.title }}" />
+      <meta property="og:title" content="{{ section.title }}" />
     {%endif%}
     {%if section.description%}
-      <meta name="description" content="{{ section.description }}" />
-      <meta name="og:description" content="{{ section.description }}" />
+      <meta property="description" content="{{ section.description }}" />
+      <meta property="og:description" content="{{ section.description }}" />
     {%endif%}
     {% if page %}
       {%if page.title%}
         <title>{{ page.title }}</title>
-        <meta name="og:title" content="{{ page.title }}" />
+        <meta property="og:title" content="{{ page.title }}" />
       {%endif%}
       {% if page.description %}
-      <meta name="description" content="{{ page.description}}" />
-      <meta name="og:description" content="{{ page.description }}" />
+      <!--meta name="description" content="{{ page.description}}" /-->
+      <meta property="og:description" content="{{ page.description }}" />
       {% elif config.description %}
-      <meta name="description" content="{{ config.description }}" />
-      <meta name="og:description" content="{{ config.description }}" />
+      <meta property="description" content="{{ config.description }}" />
+      <meta property="og:description" content="{{ config.description }}" />
       {% endif %}
     {% elif config.description %}
-      <meta name="description" content="{{ config.description }}" />
+      <meta property="og:title" content="{{ config.title }}" />
+      <meta property="description" content="{{ config.description }}" />
+    {% else %} 
+      <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+      <meta property="og:title" content="{{ config.title }}" />
     {% endif %} 
   
       {% if config.generate_feed %}
