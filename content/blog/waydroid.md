@@ -2,6 +2,7 @@
 title = "Waydroid, What is it, and How does it work?"
 date = 2024-01-17
 template = "page.html"
+description = "Waydroid, the not android emulator for linux. How it works, and why it's neat."
 
 [taxonomies]
 categories = ["Tech Showcase"]

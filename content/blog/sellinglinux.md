@@ -2,12 +2,11 @@
 title = "Why I'm in no rush to sell Linux PCs."
 date = 2023-11-02
 template = "page.html"
+description = "The TLDR of this article is linux is still jank, and probably will be for a long time."
 
 [taxonomies]
-
 tags = ["Linux"]
 categories = ["Information"]
-#url_name = "Sellinglinux"
 +++
 
 For those who know me, it may come as some surprise that I don't sell, nor recommend selling linux PCs to the general consumer market. I as a large linux fan don't recommend linux for the general audience for a couple of reasons. 

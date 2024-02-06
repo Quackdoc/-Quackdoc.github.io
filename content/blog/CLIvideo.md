@@ -2,6 +2,7 @@
 title = "Easy video tips for CLI chads"
 date = 2023-11-02
 template = "page.html"
+description = "Some quick tips on manipulating and encoding video from terminal and scripts"
 
 [taxonomies]
 tags = ["Linux", "Video", "CLI"]

@@ -2,11 +2,11 @@
 title = "Emulation, Virtualization? An introduction to Technical Term Tomfoolery."
 date = 2023-11-02
 template = "page.html"
+description = "The various tech industries like to play loosey goosey when it comes to naming stuff."
 
 [taxonomies]
 tags = ["Virtualization", "Emulation"]
 categories = ["Information"]
-#url_name = "TechnicalTermTomfoolery"
 +++
 
 When it comes to virtualization, there's so much that can be confusing when you start learning since there can be a lot of seemingly contradictory things. This is primarily due to what I call technical term tomfoolery, this post will serve as an introduction to emulation technologies, as well as learning how to navigate technical term tomfoolery. 

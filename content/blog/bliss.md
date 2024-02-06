@@ -2,6 +2,7 @@
 title = "Bliss OS and why you may actually care about it."
 date = 2023-11-03
 template = "page.html"
+description = "A showcase of some applications for the android based BlissOS"
 
 [taxonomies]
 tags = ["Linux", "Android", "Operating Systems"]

@@ -2,13 +2,11 @@
 title = "Scrcpy as a good webcam."
 date = 2023-11-02
 template = "page.html"
+description = "Using android as a webcam can be a cost effective and high quality solution to an otherwise costly problem"
 
 [taxonomies]
-
 tags = ["Linux", "Windows", "Video"]
 categories = ["Tutorial"]
-
-#url_name = "scrcpycamera"
 +++
 
 

@@ -2,9 +2,9 @@
 title = "Computer repairman's cheap tricks and tips for a better time."
 date = 2023-11-02
 template = "page.html"
+description = "A page detailing some neat tips to make doing computer repairs more tolerable and reliable."
 
 [taxonomies]
-
 tags = ["Linux", "Windows", "Virtualization"]
 categories = ["Tutorial"]
 +++

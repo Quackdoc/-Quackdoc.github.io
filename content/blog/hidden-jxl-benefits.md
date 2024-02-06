@@ -2,6 +2,7 @@
 title = "Jpeg-xl is kinda cool."
 date = 2023-11-20
 template = "page.html"
+description = "JpegXL has many features and benefits some people may be unaware of. Here are some."
 
 [taxonomies]
 tags = ["Images"]

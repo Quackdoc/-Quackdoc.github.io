@@ -2,6 +2,7 @@
 title = "Why aren't we using JXL?"
 date = 2024-01-14
 template = "page.html"
+description = "Apparently I wasn't done with JXL in the first post, so here is another one."
 
 [taxonomies]
 tags = ["Images"]

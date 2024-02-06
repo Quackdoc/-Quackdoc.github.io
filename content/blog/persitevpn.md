@@ -2,6 +2,7 @@
 title = "Per-site VPN using firefox and wireguard."
 date = 2023-11-04
 template = "page.html"
+description = "Utilizing wireguard, Socks, and firefox to get per website VPN capabilities."
 
 [taxonomies]
 tags = ["Linux", "Windows", "VPN"]

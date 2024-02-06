@@ -31,9 +31,9 @@
         <title>{{ page.title }}</title>
         <meta name="og:title" content="{{ page.title }}" />
       {%endif%}
-      {% if page.summary %}
-      <meta name="description" content="{{ page.summary | safe }}" />
-      <meta name="og:description" content="{{ page.summary | safe }}" />
+      {% if page.description %}
+      <meta name="description" content="{{ page.description}}" />
+      <meta name="og:description" content="{{ page.description }}" />
       {% elif config.description %}
       <meta name="description" content="{{ config.description }}" />
       <meta name="og:description" content="{{ config.description }}" />
