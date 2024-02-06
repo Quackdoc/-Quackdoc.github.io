@@ -14,10 +14,9 @@
 
       <!-- open gragh stuff-->>
       
-      <meta name="og:site_name" content="Quackdoc's Blog" />
-      <meta property="og:url" content="https://quackdoc.github.io/" />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="Quackdoc's Blog" />
+      <meta property="og:site_name" content="QuacksBlog" />
+      
     {%if section.title%}
       <title>{{ section.title }}</title>
       <meta property="og:title" content="{{ section.title }}" />
@@ -27,6 +26,7 @@
       <meta property="og:description" content="{{ section.description }}" />
     {%endif%}
     {% if page %}
+      <meta property="og:url" content="{{ page.url }}" />
       {%if page.title%}
         <title>{{ page.title }}</title>
         <meta property="og:title" content="{{ page.title }}" />
@@ -90,8 +90,7 @@
                 {% if config.extra.after_dark_title %}
                     <header>
                         <h1>{{ config.extra.after_dark_title }}</h1>
-                        <h1>AAAAAAAAAAAAAAAAAAA</h1>
-                    </header>
+                        </header>
                 {% endif %}
                 {% for page in paginator.pages %}
                     {{ post_macros::page_in_list(page=page) }}
