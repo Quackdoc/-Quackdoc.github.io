@@ -14,8 +14,9 @@
 
       <!-- open gragh stuff-->>
       <title>{% block title %}{{ config.title }}{% endblock title %}</title>
-      <meta name="og:title" content="{{ config.title }}" />
-
+      <!--meta name="og:title" content="{{ config.title }}" /-->
+      <meta name="og:site_name" content="Quackdoc's Blog" />
+      <meta property="og:url" content="https://quackdoc.github.io/" />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="Quackdoc's Blog" />
     {%if section.title%}
