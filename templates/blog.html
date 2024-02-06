@@ -12,18 +12,36 @@
       <!-- Enable responsiveness on mobile devices-->
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+      <!-- open gragh stuff-->>
+      <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+      <meta name="og:title" content="{{ config.title }}" />
+
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="Quackdoc's Blog" />
+    {%if section.title%}
+      <title>{{ section.title }}</title>
+      <meta name="og:title" content="{{ section.title }}" />
+    {%endif%}
+    {%if section.description%}
+      <meta name="description" content="{{ section.description }}" />
+      <meta name="og:description" content="{{ section.description }}" />
+    {%endif%}
     {% if page %}
-      {% if page.description %}
-      <meta name="description" content="{{ page.description }}" />
+      {%if page.title%}
+        <title>{{ page.title }}</title>
+        <meta name="og:title" content="{{ page.title }}" />
+      {%endif%}
+      {% if page.summary %}
+      <meta name="description" content="{{ page.summary | safe }}" />
+      <meta name="og:description" content="{{ page.summary | safe }}" />
       {% elif config.description %}
       <meta name="description" content="{{ config.description }}" />
+      <meta name="og:description" content="{{ config.description }}" />
       {% endif %}
     {% elif config.description %}
       <meta name="description" content="{{ config.description }}" />
-    {% endif %}
-
-      <title>{% block title %}{{ config.title }}{% endblock title %}</title>
-
+    {% endif %} 
+  
       {% if config.generate_feed %}
         <link rel="alternate" type={% if config.feed_filename == "atom.xml" %}"application/atom+xml"{% else %}"application/rss+xml"{% endif %} title="RSS" href="{{ get_url(path=config.feed_filename) | safe }}">
       {% endif %}
