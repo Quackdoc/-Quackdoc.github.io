@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://www.w3schools.com/lib/w3data.js"></script>
+  <script src="/JS/microlight.js"></script>
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="/CSS/simple.css">
+      <link rel="stylesheet" href="/CSS/custom.css">
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <!-- open gragh stuff-->
+      
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="QuacksBlog" />
+      <meta property="og:url" content="https://quackdoc.github.io/blog/" />
+    
+    
+    
+      
+      <title>Emulation, Virtualization? An introduction to Technical Term Tomfoolery.</title>
+      <meta property="og:title" content="Emulation, Virtualization? An introduction to Technical Term Tomfoolery." />
+      
+      
+      <!--meta name="description" content="The various tech industries like to play loosey goosey when it comes to naming stuff." /-->
+      <meta property="og:description" content="The various tech industries like to play loosey goosey when it comes to naming stuff." />
+      
+     
+  
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+      <div>
+        <header>
+          <nav>
+            <h1 align="center">
+              Quack's Blog
+            </h1>
+            <br/>
+            <ul>
+              <li><a href="/">HomePage</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/about.html">About</a></li>
+            </ul>
+          </nav>
+        </header>
+        <div>
+        
+    
+        
+                
+            
+    
+
+    <header>
+        <h1 itemprop="headline">Emulation, Virtualization? An introduction to Technical Term Tomfoolery.</h1>
+        <span class="muted">
+    <svg class="icon i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>4 minute read</span>
+    <svg class="icon i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-11-02
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>When it comes to virtualization, there's so much that can be confusing when you start learning since there can be a lot of seemingly contradictory things. This is primarily due to what I call technical term tomfoolery, this post will serve as an introduction to emulation technologies, as well as learning how to navigate technical term tomfoolery. </p>
+<p>I want to preface this with stating that I am in no way, a hypervisor or VMM developer. I have hacked on them in the past, but my knowledge here is only of the fundamentals and usage of VMMs and hypervisor technologies, not developing them. </p>
+<p>The first thing to know when trying to learn computer related skills, is that the real world and the computer science world operate on two separate dictionaries. I'm not sure when this started, but it's been around for quite a long time. However instead of a history lesson this will primarily focus on virtualization.</p>
+<span id="continue-reading"></span><h3 id="so-what-is-an-emulator">So what IS an emulator?</h3>
+<p>Emulators are things which emulate. Simple enough, so what is to emulate? There are a few ways of saying it, but in the end it boils down to &quot;intentionally imitating something&quot;. </p>
+<h3 id="virtualization">Virtualization</h3>
+<p>To start things off, let's start off with the classic &quot;it's virtualization, not emulation&quot;. This is a fairly common quote, so you may have heard it before. This is the equivalent of saying, &quot;It's a Dodge Charger, not a Car&quot;. Virtualization is merely hardware accelerated CPU emulation. You are still imitating another computer environment. Using this method you typically take the CPU calls the kernel makes, and send them to the host CPU. However there are CPU calls and memory addresses that you really don't want a VM to to access. Hardware acceleration lets the computer emulate these calls instead of passing them directly to the host with very low overhead.</p>
+<p>It's also with noting para-virtualisation, which is an interface which emulates the connections between hardware and other components or the components themselves. The most common implementation of these that users would actually be aware of is Qemu's Virtio devices. Qemu has a plethora of para-virt devices as well as fully emulated devices. Using para-virt or &quot;Virtio&quot; devices when possible can reduce overhead by a decent chunk due to instead of emulating devices, you are providing an emulated interface usually, to real devices or APIs, but this is not always the case.</p>
+<h3 id="wine-too">Wine too?</h3>
+<p>Wine is another classic example of this phenomena where technical dictionary and the real world dictionary are two completely separate things. Wine is an acronym actually for wine is not an emulator. As wine does provide an windows like environment when running on Unix, I would for sure consider this a class of emulation. In fact, they actually do address this... I recommend reading wine's FAQ on this in where they term it far more correct &quot;Wine is not <em>just</em> and emulator&quot;. </p>
+<h3 id="containers-as-well">Containers as well.</h3>
+<p>Wine and Virtualization are not alone in the technical term tomfoolery when it comes to emulation. Containerization programs such as LXC and Docker also do this. With virtualization, you are emulating the connection between hardware and kernel. However with containers you are instead emulating the connection between userland and kernel. This is a really interesting technique since it does allow you to, in theory share all devices on a machine. Of course this poses it's own issues, for instance when one container is running an application that want's exclusive access to a device or hardware and another container want's to do the same. Without proper mediation you could easily run into race conditions, however modern software stacks are pretty well battle tested at this point so it is unlikely to cause an issue now unless you go out of you way to do so. </p>
+<p>Containers do fit into an interesting situation. At what point does a container become a virtualized environment, and at what point does it not? Take LXC for instance, you can run multiple emulated environments using LXC, so a lot of people consider it virtualization. But by the same token, what about chroot? chroot is as the name implies, changing the root folder. Many people don't consider it to be virtualization or Emulation, but I personally do. Chroot is even rather close to a hypervisor itself. It allows you to run an emulated environment and allows you to share resources with the main environment. </p>
+<h3 id="virtualization-is-just-a-branch-of-emulation">Virtualization is just a branch of emulation</h3>
+<p>In the end, Virtualization, and Containerization if you consider them separate technologies, are both specific techniques Emulation. To say something is &quot;Not emulation, it's Virtualization&quot; is IMO wrong. Like wine it would perhaps be better to say &quot;Not <em>just</em> Emulation&quot;. Perhaps that could solve the technical term tomfoolery that is present in this small segment of the tech world.</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://quackdoc.github.io/categories/information/">Information</a>
+                
+                
+                    and
+                    tagged
+                    
+                        <a href="https://quackdoc.github.io/tags/virtualization/">Virtualization</a>
+                        
+                            
+                                
+                                    and
+                                
+                            
+                        
+                    
+                        <a href="https://quackdoc.github.io/tags/emulation/">Emulation</a>
+                        
+                            
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+        <hr>
+          <div>
+          <div w3-include-html="/signature.html"></div>
+          </div>
+        <hr>
+        <script>
+          w3IncludeHTML();
+        </script>
+    </body>
+
+</html>

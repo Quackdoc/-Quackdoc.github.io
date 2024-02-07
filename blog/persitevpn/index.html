@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://www.w3schools.com/lib/w3data.js"></script>
+  <script src="/JS/microlight.js"></script>
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="/CSS/simple.css">
+      <link rel="stylesheet" href="/CSS/custom.css">
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <!-- open gragh stuff-->
+      
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="QuacksBlog" />
+      <meta property="og:url" content="https://quackdoc.github.io/blog/" />
+    
+    
+    
+      
+      <title>Per-site VPN using firefox and wireguard.</title>
+      <meta property="og:title" content="Per-site VPN using firefox and wireguard." />
+      
+      
+      <!--meta name="description" content="Utilizing wireguard, Socks, and firefox to get per website VPN capabilities." /-->
+      <meta property="og:description" content="Utilizing wireguard, Socks, and firefox to get per website VPN capabilities." />
+      
+     
+  
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+      <div>
+        <header>
+          <nav>
+            <h1 align="center">
+              Quack's Blog
+            </h1>
+            <br/>
+            <ul>
+              <li><a href="/">HomePage</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/about.html">About</a></li>
+            </ul>
+          </nav>
+        </header>
+        <div>
+        
+    
+        
+                
+            
+    
+
+    <header>
+        <h1 itemprop="headline">Per-site VPN using firefox and wireguard.</h1>
+        <span class="muted">
+    <svg class="icon i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>11 minute read</span>
+    <svg class="icon i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-11-04
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <h3 id="note-this-is-unsafe">NOTE: THIS IS UNSAFE</h3>
+<p>It turns out that sometimes when firefox boots the multi account containers will not load up. If this happens and you use a website you don't want to be used over your normal network <strong>THIS WILL COMPROMISE YOU</strong> The websites will load through your normal network. You have been warned.</p>
+<span id="continue-reading"></span><h1 id="per-site-vpn-using-firefox-and-wireguard-or-other-vpns">Per-site VPN using firefox and wireguard (or other VPNs)</h1>
+<p>The basic Idea of this is pretty simple, Firefox has an offical addon called Multi-Account containers. This allows you to create and use pseudo profiles. These profiles allow you to isolate cookies, And use mozilla VPN. But &quot;wait&quot; you say, &quot;Mozilla VPN sucks!&quot; I agree! thankfully Mozilla may not allow us to use wireguard VPNs from within firefox let alone the extension, Socks5 proxies are supported.</p>
+<h3 id="why-do-we-need-wireguard-at-all">Why do we need wireguard at all?</h3>
+<p>Aside from the obvious &quot;My VPN provider doesn't support socks5.&quot; Socks5 doesn't have inherent encryption, this means a misconfigured setup has a significant chance of de-anonymization occurring. There are many obvious reasons why this is bad. Due to this, It's often better to use a more reliable and easy to use VPN solution like Wireguard or OpenVPN. </p>
+<h2 id="what-methods-are-available-to-us">What methods are available to us?</h2>
+<p>There are many ways of doing this. Their are main two ways we will focus on today. The first will be using ShadowSocks + a VPN, the other method will be to use a tool called wireproxy. While many other options do exist. These are what this guide will be focusing on.</p>
+<h3 id="wireproxy">Wireproxy</h3>
+<p>Wireproxy is the easiest but comes with a sad disadvantage. Firstly however, Wireproxy handles both the VPN and the socks interface. You can set it up really easy by making a simple config file and launching it with a cmdline. This makes wireproxy really fast to setup, on linux you can easily do this via start configs, create a systemd service (my prefered method) or any init system autostart system you prefer. On windows, you can easily set this up using windows' task scheduler. Simply follow the instructions below for that. </p>
+<p>The unfortunate detriment that comes with wireproxy is that when inactive for a time, the VPN portion goes into a &quot;sleep&quot; mode. meaning when you open a website you will be greeted with a &quot;Hmm. We’re having trouble finding that site.&quot; error from firefox. Simply wait a few seconds then refresh the page. It should then be working. </p>
+<h4 id="windows-setup">Windows setup</h4>
+<p>Setup is quite nice and easy, First download wireproxy from their <a href="https://github.com/pufferffish/wireproxy/release">Github repo.</a>, (You may need to click &quot;Show all assets&quot; to download the windows version. you will want <code>wireproxy_windows_amd64.tar.gz</code>. Don't worry if you havent seen this file extension, Both windows file explorer and 7z can extract it perfectly fine, (though you will need to extract it twice). Copy the executable to somewhere you will remeber it (I choose C:\Tools). </p>
+<p>The next step is to go to your VPN provider and download the appropriate wireguard config file. I cannot help you here as this will vary in a per vpn basis. Place this file somewhere you will remember (for me I will do C:\Tools\VPN). </p>
+<p>Now that you have downloaded the wireguard config file, we need to create the file. No worries, this will be mostly copy and paste with some minor edits. Create a text file with the extension .conf. This is my file contents. </p>
+<p>Filename: C:\Tools\VPN\wireproxy-swiss.conf</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>WGConfig = C:\Tools\VPN\Swiss-vpn.conf
+</span><span>
+</span><span>[Socks5]
+</span><span>BindAddress = 127.0.0.1:25344
+</span></code></pre>
+<p>Nice and simple right? Simply point <code>WGConfig</code> to the config you downloaded from your vpn provider. then for the <code>[Socks5] BindAddress</code> part <code>127.0.0.1</code> is the IP address for your local PC. this is often also called localhost. <code>:25344</code> is the important part, This is the part we will need to change for additional configs. This is called a <code>port</code> if you think of an IP address you can think of it as an Apartment building. The port is the room number inside of the building. </p>
+<p>Each network service uses ports. Without getting too technical, Every VPN instance we run will be it's own network service, as such each one needs a unique port number. For each subsequent VPN we run, we should +1 to that number. This will keep things organized and simple to remeber. </p>
+<p>Now that we have the file running, we are on the last part of the non firefox stuff. in your start menu, search <code>Task Scheduler</code> and launch the app that comes up. At the top of the rightmost bar you should see <code>Create basic task</code>, run it. Give it a good name and description! I'll do the below.</p>
+<ul>
+<li>Name: Swiss socks5 VPN</li>
+<li>Description : Swiss VPN using Socks5 for firefox</li>
+</ul>
+<p>Click <code>Next &gt;</code>, Tick &quot;When I log on&quot;, Click <code>Next &gt;</code>, &quot;Start a program&quot;, Click <code>Next &gt;</code>. and Finally we add the command to start the proxy and fill it as follows:</p>
+<ul>
+<li>Program/script: &quot;C:\Tools\wireproxy.exe&quot;</li>
+<li>Add Arguments: &quot;-d -c C:\Tools\VPN\wireproxy-swiss.conf&quot;</li>
+</ul>
+<p>Click <code>Next &gt;</code>, Tick &quot;Open the properties dialog for this task&quot;, Click <code>Finish</code>. You now want to set &quot;Run whether user is logged on or not&quot;. This is necessary because windows is a really stupid OS, and if it's not set, you will get a black window opening up running the program! not something we want at all. Finally click OK. After this you can either reboot your PC, or right click the task we made, and click <code>Run</code> You can now go to the firefox section at the bottom of the page.</p>
+<h4 id="linux">Linux</h4>
+<p>The guide for this is mostly 1:1 with windows with the exception of scheduler and file paths. Making a systemd service is easy enough, Simply create a file with a .service extension, naming it whatever you please, Locate it in this path <code>$HOME/.config/systemd/user/SERVICENAME.service</code> and enter the appropriate contents. it may look something like this </p>
+<pre data-lang="toml" style="background-color:#2b303b;color:#c0c5ce;" class="language-toml "><code class="language-toml" data-lang="toml"><span>[Unit]
+</span><span style="color:#bf616a;">Description</span><span>=</span><span style="background-color:#bf616a;color:#2b303b;">Descrptive description</span><span>
+</span><span style="color:#bf616a;">After</span><span>=</span><span style="background-color:#bf616a;color:#2b303b;">network.target</span><span>
+</span><span>
+</span><span>[Service]
+</span><span style="color:#bf616a;">Type</span><span>=</span><span style="background-color:#bf616a;color:#2b303b;">simple</span><span>
+</span><span style="color:#bf616a;">ExecStartPre</span><span>=</span><span style="background-color:#bf616a;color:#2b303b;">/bin/sleep 2</span><span>
+</span><span style="color:#bf616a;">ExecStart</span><span>=</span><span style="background-color:#bf616a;color:#2b303b;">wireproxy -d -c PATH/TO/Wireguard.conf&quot;</span><span>
+</span><span>
+</span><span>[Install]
+</span><span style="color:#bf616a;">WantedBy</span><span>=</span><span style="background-color:#bf616a;color:#2b303b;">default.target</span><span>
+</span></code></pre>
+<p>Other Init systems or autostart methods will not be covered here as systemd covers the vast majority of installs now, anyone not using systemd I will assume have the knowledge to set up an autostarting application themselves anyways. </p>
+<h3 id="shadowsocks">Shadowsocks</h3>
+<p>Shadowsocks can be a really complicated program, however thankfully for us, Shadowsocks provides sslocal. sslocal is a CLI client that makes configuration really easy. The major detriment to shadowsocks is that it doesn't handle connecting to a VPN for us. </p>
+<p>Setting up a VPN to not route any default traffic unless the application explicitly wants it can be pretty hard sometimes. Sadly the official wireguard client on windows doesn't support split routing which could be used for this and on linux. well it's linux, well into DIY land. However I do have instructions on how to set this up for those savvy enough.</p>
+<h4 id="windows-vpn-setup">Windows VPN setup</h4>
+<p>An example dummy Windows conf is given below on how to setup a wireguard VPN to not preform routing of data by default. Note the postup and predown scripts. A brief description is as follows</p>
+<p><code>Table = off</code> In networking, we call the connections from one place to another <code>Routes</code>. and the <code>Table</code> is a list of these potential routes and their priorities. Unfortunately for us. the official wireguard client isn't all THAT smart as it doesn't allow us to set <code>metric</code> which is the priority an interface has. But thankfully some powershell scripting can help us out. so we tell wireguard &quot;Don't add the new routes to the routing table&quot; This means nothing would be able to actually use this connection. which is where the next step comes in. </p>
+<p><code>PostUp =</code> allows us to run commands on the host before the after the interface goes live. Since we turned off routing table, we need to manually add it ourselves</p>
+<p><code>PreDown =</code> Like wise, since we added the connection, but wireguard's table is disabled, we also need to manually remove the route. Leaving it running could lead to unwanted behaviors and bugs. so best to remove it outright</p>
+<h4 id="never-run-untrusted-scripts">NEVER RUN UNTRUSTED SCRIPTS</h4>
+<p>If you cannot read what this is doing Do not run it. I will not explain what this does. Running any sort of script from the internet is dangerous. USE wireproxy! for all you know, this could install a keylogger (and YES! It could be this small of a script!) or delete all your pictures. I was conflicted on whether or not to add this. However I think it will be much more beneficial if I do. (though wireproxy could be malware too, welcome to the internet and modern computing. at least you can isolate it if you know how.) </p>
+<pre data-lang="toml" style="background-color:#2b303b;color:#c0c5ce;" class="language-toml "><code class="language-toml" data-lang="toml"><span>[Interface]
+</span><span style="color:#bf616a;">PrivateKey </span><span>= </span><span style="background-color:#bf616a;color:#2b303b;">thisisgarbageinputthatrepresentsaprivatekey</span><span>
+</span><span style="color:#bf616a;">Address </span><span>= </span><span style="background-color:#bf616a;color:#2b303b;">xxx.xxx.xxx.xxx/32</span><span>
+</span><span style="color:#bf616a;">DNS </span><span>= </span><span style="background-color:#bf616a;color:#2b303b;">xxx.xxx.xxx.xxx</span><span>
+</span><span style="color:#bf616a;">PostUp </span><span>= </span><span style="background-color:#bf616a;color:#2b303b;">powershell -command &quot;$wgInterface = Get-NetAdapter -Name %WIREGUARD_TUNNEL_NAME%; route add 0.0.0.0 mask 0.0.0.0 0.0.0.0 IF $wgInterface.ifIndex metric 9999; Set-NetIPInterface -InterfaceIndex $wgInterface.ifIndex -InterfaceMetric 9999;&quot;</span><span>
+</span><span style="color:#bf616a;">PreDown </span><span>= </span><span style="background-color:#bf616a;color:#2b303b;">powershell -command &quot;$wgInterface = Get-NetAdapter -Name %WIREGUARD_TUNNEL_NAME%; route delete 0.0.0.0 mask 0.0.0.0 0.0.0.0 if $wgInterface.ifIndex metric 9999; Set-NetIPInterface -InterfaceIndex $wgInterface.ifIndex -InterfaceMetric 9999;&quot;</span><span>
+</span><span style="color:#bf616a;">Table </span><span>= </span><span style="background-color:#bf616a;color:#2b303b;">off</span><span>
+</span></code></pre>
+<h4 id="linux-vpn-setup">Linux VPN setup</h4>
+<p>For linux things are both easier and more complicated Linux has many, MANY ways to handle VPNs. I will be using network-manager for this since it will apply to most distros out there. if this doesn't apply to you, you likely already have the knowledge to implement this yourself. In theory, it should be really simple since nearly all networking tools allow you to set the interface priority/metric. however it turns out network-manager is kinda stupid, and has a completely seperate config for DNS priority, and when you set a VPN, it get's priority regardless of Interface priority! </p>
+<p><img src="https://media1.tenor.com/images/2707732801c38d7c395ca878b17cbcef/tenor.gif?itemid=13916835" alt="WHY" /></p>
+<p>Download your wireguard config. No need for modifications to this one. then run this commands.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>connection import type wireguard file wireguard-swiss.conf
+</span><span>nmcli con modify wireguard-swiss  ipv4.dns-priority 9999
+</span><span>nmcli con modify wireguard-swiss ipv4.route-metric 9999
+</span><span>nmcli con modify wireguard-swiss ipv4.never-default yes
+</span><span>nmcli con modify wireguard-swiss  ipv6.dns-priority 9999
+</span><span>nmcli con modify wireguard-swiss ipv6.route-metric 9999
+</span><span>nmcli con modify wireguard-swiss ipv6.never-default yes
+</span><span>nmcli con modify wireguard-swiss connection.autoconnect yes
+</span></code></pre>
+<p>We run these commands since we want only connections that explicitly want to use the vpn to use it. After running these commands the new interface should come up every time you log in, and the priority should be the lowest possible each time.</p>
+<h5 id="shadowsocks-setup">Shadowsocks setup</h5>
+<p>Just like on setting up wireproxy, This uses mostly the same guide. On linux, Create the systemd file, enable it. the command to execute is this <code>sslocal -b 127.0.0.1:25344 --outbound-bind-interface VPN-NAME-HERE</code>. Use 127.0.0.1 to bind to localhost on port <code>25344</code>. then use <code>--outbound-bind-interface VPN-NAME-HERE</code> it's important to keep note that the vpn name is case sensitive.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>[Unit]
+</span><span>Description=ShadowSocks5 Proxy
+</span><span>After=network.target
+</span><span>
+</span><span>[Service]
+</span><span>Type=simple
+</span><span>ExecStartPre=/bin/sleep 2
+</span><span>ExecStart=sslocal -b 127.0.0.1:25344 --outbound-bind-interface wireguard-swiss
+</span><span>
+</span><span>[Install]
+</span><span>WantedBy=default.target
+</span></code></pre>
+<p>One thing that is good to keep note of is the <code>ExecStartPre</code> command, this simply runs sleep for 2 seconds to make sure every thing else gets up and running first. This may not be necessary, but IMO it's nice to have anyways for a bit of extra reliability. Not to mention, I doubt you could launch a firefox session, open a web page, and have it error out before this manages to start up. If you do manage this, you can always lower the sleep delay.</p>
+<h3 id="firefox">Firefox</h3>
+<p>Finally for the last steps, Setup the addon Multi-account containers for firefox. Firstly Add the addon to your browser using firefox's <a href="https://addons.mozilla.org/en-CA/firefox/addon/multi-account-containers/">addon page for it.</a> Then open the addon window, Click <code>Manage containers</code>, and then <code>New container</code>. Give it a good Name, Colour, and Icon.</p>
+<p>You will then go again, click <code>Manage Containers</code>, Click the Container you just created, and then click <code>Advanced Proxy Setup</code>. Add the socks5 IP and port we chose, in my case it is <code>127.0.0.1:25344</code>. However we need to prefix it with <code>socks://</code> to tell firefox it is a socks vpn, so I would enter <code>socks://127.0.0.1:25344</code>. Finally click apply, and you are done! </p>
+<p>You can now use this profile to browse webpages with that VPN without interrupting any other traffic on your PC. Simply repeat the instructions you had to go through again, using a different port and VPN server to create new profiles that have different VPNs. </p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://quackdoc.github.io/categories/tutorial/">Tutorial</a>
+                
+                
+                    and
+                    tagged
+                    
+                        <a href="https://quackdoc.github.io/tags/linux/">Linux</a>
+                        
+                            
+                                
+                                    ,
+                                
+                            
+                        
+                    
+                        <a href="https://quackdoc.github.io/tags/windows/">Windows</a>
+                        
+                            
+                                
+                                    and
+                                
+                            
+                        
+                    
+                        <a href="https://quackdoc.github.io/tags/vpn/">VPN</a>
+                        
+                            
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+        <hr>
+          <div>
+          <div w3-include-html="/signature.html"></div>
+          </div>
+        <hr>
+        <script>
+          w3IncludeHTML();
+        </script>
+    </body>
+
+</html>

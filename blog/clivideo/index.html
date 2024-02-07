@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://www.w3schools.com/lib/w3data.js"></script>
+  <script src="/JS/microlight.js"></script>
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="/CSS/simple.css">
+      <link rel="stylesheet" href="/CSS/custom.css">
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <!-- open gragh stuff-->
+      
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="QuacksBlog" />
+      <meta property="og:url" content="https://quackdoc.github.io/blog/" />
+    
+    
+    
+      
+      <title>Easy video tips for CLI chads</title>
+      <meta property="og:title" content="Easy video tips for CLI chads" />
+      
+      
+      <!--meta name="description" content="Some quick tips on manipulating and encoding video from terminal and scripts" /-->
+      <meta property="og:description" content="Some quick tips on manipulating and encoding video from terminal and scripts" />
+      
+     
+  
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+      <div>
+        <header>
+          <nav>
+            <h1 align="center">
+              Quack's Blog
+            </h1>
+            <br/>
+            <ul>
+              <li><a href="/">HomePage</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/about.html">About</a></li>
+            </ul>
+          </nav>
+        </header>
+        <div>
+        
+    
+        
+                
+            
+    
+
+    <header>
+        <h1 itemprop="headline">Easy video tips for CLI chads</h1>
+        <span class="muted">
+    <svg class="icon i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>4 minute read</span>
+    <svg class="icon i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-11-02
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>When it comes to encoding videos, FFmpeg is a ubiquitous tool, it's supported on nearly every modern platform, and many retro platforms, includes a plethora of encoders and decoders, and targets most currently used architectures.</p>
+<p>for decoding videos and watching them MPV is easily king here, with a great deal of flexibility and customization, you can do a LOT to tune your viewing experience perfectly.</p>
+<p>One of the downsides to using FFmpeg and other CLI tools is how many options they can sometimes have and scripting these options can sometimes be a complicated mess. This post will cover a few tips and tricks to make it just a little bit easier. </p>
+<span id="continue-reading"></span><h2 id="flexible-scripting">Flexible scripting.</h2>
+<p>This will focus on bash scripts however these can easily be implemented on windows via python or powershell scripting too. </p>
+<p>Taking a look at the given example it is small and concise, however it is hard to read and is prone to spelling mistakes that can be hard to point out. </p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#bf616a;">ffmpeg -init_hw_device</span><span> vulkan</span><span style="color:#bf616a;"> -i</span><span> Pacific-rim.webm \
+</span><span style="color:#bf616a;">-vf</span><span> hwupload,libplacebo=tonemapping=st2094-40:peak_detect=false:contrast_recovery=0.5:colorspace=bt2020nc:color_primaries=bt2020:color_trc=arib-std-b67:range=tv:format=yuv420p10le,hwdownload,format=yuv420p10le \
+</span><span style="color:#bf616a;"> -c</span><span>:v rawvideo</span><span style="color:#bf616a;"> -f</span><span> nut - | </span><span style="color:#bf616a;">mpv --cache</span><span>=no -
+</span></code></pre>
+<p>instead of dealing with this mess, we can actually instead use an array instead, this lets us easily format the arguments, add comments, and as implied by the previous point, comment out arguments. and example of the exact same script is given below, going by character count alone the script is longer, however it is much easier to read and work with. </p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#65737e;">#!/bin/bash
+</span><span>
+</span><span style="color:#bf616a;">args</span><span>=(
+</span><span style="color:#65737e;">###set this block as needed
+</span><span>tonemapping=st2094-40
+</span><span>:peak_detect=false
+</span><span>:gamut_mode=perceptual
+</span><span>:contrast_recovery=0.5
+</span><span style="color:#65737e;">###
+</span><span style="color:#65737e;">#:deband=true
+</span><span style="color:#65737e;">#:deband_iterations=4
+</span><span style="color:#65737e;">#:deband_threshold=8
+</span><span style="color:#65737e;">###set HLG
+</span><span>:colorspace=bt2020nc
+</span><span>:color_primaries=bt2020
+</span><span>:color_trc=arib-std-b67
+</span><span style="color:#65737e;">###
+</span><span>:range=tv
+</span><span>:format=yuv420p10le,hwdownload,format=yuv420p10le
+</span><span>)
+</span><span>
+</span><span style="color:#bf616a;">formated</span><span>=$</span><span style="color:#a3be8c;">(</span><span style="color:#96b5b4;">echo </span><span>$</span><span style="color:#a3be8c;">{</span><span style="color:#bf616a;">args[@]</span><span style="color:#a3be8c;">} </span><span>| </span><span style="color:#bf616a;">tr -d </span><span>&quot; &quot;</span><span style="color:#a3be8c;">)
+</span><span>
+</span><span style="color:#bf616a;">ffmpeg -init_hw_device</span><span> vulkan</span><span style="color:#bf616a;"> -i</span><span> Pacific-rim.webm</span><span style="color:#bf616a;"> -vf</span><span> hwupload,libplacebo=$</span><span style="color:#bf616a;">formated -c</span><span>:v rawvideo</span><span style="color:#bf616a;"> -f</span><span> nut - | </span><span style="color:#bf616a;">mpv --cache</span><span>=no -
+</span></code></pre>
+<h2 id="comparing-videos-with-mpv">Comparing videos with MPV</h2>
+<p>Comparing videos can be one of the worst experiences from proprietary tools that are lacking in features, to open source tools that are really janky, My prefered way of comparing videos is actually using MPV. </p>
+<p><a href="https://gist.github.com/Quackdoc/bacd7f5eb78df5fffdca08c0e9720563">this is a link to my mpv config</a> if you scroll to the bottom I have a couple profiles created to help in comparing videos <code>2sidesplit</code> and the various <code>diff</code> profiles will most likely be the most useful for visualizing changes. while dedicated tools can be more helpful, MPV is more then enough for simple comparisons. </p>
+<p>to use MPV in this manor, simply launch <code>mpv file1.mkv --external-file=file2.mkv</code> then you can use <code>--profile=diff</code> to use one of the diff profiles. if you instead want to be able to switch between videos do not specify a profile and instead use <code>set vid 1</code> <code>set vid 2</code> to swap between videos, this can scale to as many videos as you have. you can set keybinds by adding the below to your input.conf. the key buttons will then be <code>ctrl + shift + 1</code> etc. </p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Ctrl+! set vid 1
+</span><span>Ctrl+@ set vid 2
+</span><span>Ctrl+# set vid 3
+</span><span>Ctrl+$ set vid 4
+</span></code></pre>
+<h2 id="comparing-mpv-settings">Comparing MPV settings</h2>
+<p><a href="https://gist.github.com/Quackdoc/efd1b93e12cf915a4d2deeb9b4107cf6">This is a link to a script</a> I modify and use to collect screenshots to use this script, I highly recommend setting a profile like so in your mpv.conf and launching with it. it's important to set <code>input-ipc-server</code> as this is what the script I made uses to interact with mpv. </p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#bf616a;">[comp]
+</span><span style="color:#65737e;">#input-ipc-server=\\.\pipe\mpvsocket  ### for windows
+</span><span style="color:#bf616a;">input-ipc-server</span><span>=</span><span style="color:#a3be8c;">/tmp/mpvsocket           </span><span style="color:#65737e;">### for linux
+</span><span>
+</span><span style="color:#65737e;">##set these as you please
+</span><span style="color:#bf616a;">screenshot-format</span><span>=</span><span style="color:#a3be8c;">jxl
+</span><span style="color:#bf616a;">screenshot-directory</span><span>=</span><span style="color:#bf616a;">~</span><span style="color:#a3be8c;">/Pictures/mpv
+</span><span style="color:#bf616a;">screenshot-jxl-distance</span><span>=</span><span style="color:#a3be8c;">0.0
+</span><span style="color:#bf616a;">screenshot-high-bit-depth</span><span>=</span><span style="color:#a3be8c;">yes
+</span><span style="color:#bf616a;">screenshot-jxl-effort</span><span>=</span><span style="color:#a3be8c;">3
+</span><span>
+</span><span style="color:#65737e;">##set this to yes if you want to retain the original colorspace
+</span><span style="color:#bf616a;">screenshot-tag-colorspace</span><span>=</span><span style="color:#a3be8c;">no
+</span></code></pre>
+<h2 id="generating-images-to-share">Generating images to share</h2>
+<p>while you really <em>shouldn't</em> use keyframes to showcase your new av1 encodes, we already know you will anyways, so here is an easy way to do so. </p>
+<p>this specifically is an example to create animated AVIF images for each keyframe in your encode. this is great since you can use an entire GOP for showcasing your encodes.
+<code>ffmpeg -i .\nyan-av1.webm -c copy -f segment .\avif-keys\out-%02d.avif</code></p>
+<p>this on the otherhand will generate a png of every keyframe you have.
+<code>ffmpeg -i ..\nyan-av1.webm -c:v copy -an -bsf:v &quot;noise=drop=not(key)&quot; -f nut - | ffmpeg -vsync 0 -i - out/image-%03d.png</code></p>
+<h3 id="this-is-incomplete-and-will-be-added-to-in-the-future">This is incomplete, and will be added to in the future</h3>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://quackdoc.github.io/categories/tidbits/">Tidbits</a>
+                
+                
+                    and
+                    tagged
+                    
+                        <a href="https://quackdoc.github.io/tags/linux/">Linux</a>
+                        
+                            
+                                
+                                    ,
+                                
+                            
+                        
+                    
+                        <a href="https://quackdoc.github.io/tags/video/">Video</a>
+                        
+                            
+                                
+                                    and
+                                
+                            
+                        
+                    
+                        <a href="https://quackdoc.github.io/tags/cli/">CLI</a>
+                        
+                            
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+        <hr>
+          <div>
+          <div w3-include-html="/signature.html"></div>
+          </div>
+        <hr>
+        <script>
+          w3IncludeHTML();
+        </script>
+    </body>
+
+</html>

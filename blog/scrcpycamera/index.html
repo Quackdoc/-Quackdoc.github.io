@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://www.w3schools.com/lib/w3data.js"></script>
+  <script src="/JS/microlight.js"></script>
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="/CSS/simple.css">
+      <link rel="stylesheet" href="/CSS/custom.css">
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <!-- open gragh stuff-->
+      
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="QuacksBlog" />
+      <meta property="og:url" content="https://quackdoc.github.io/blog/" />
+    
+    
+    
+      
+      <title>Scrcpy as a good webcam.</title>
+      <meta property="og:title" content="Scrcpy as a good webcam." />
+      
+      
+      <!--meta name="description" content="Using android as a webcam can be a cost effective and high quality solution to an otherwise costly problem" /-->
+      <meta property="og:description" content="Using android as a webcam can be a cost effective and high quality solution to an otherwise costly problem" />
+      
+     
+  
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+      <div>
+        <header>
+          <nav>
+            <h1 align="center">
+              Quack's Blog
+            </h1>
+            <br/>
+            <ul>
+              <li><a href="/">HomePage</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/about.html">About</a></li>
+            </ul>
+          </nav>
+        </header>
+        <div>
+        
+    
+        
+                
+            
+    
+
+    <header>
+        <h1 itemprop="headline">Scrcpy as a good webcam.</h1>
+        <span class="muted">
+    <svg class="icon i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>5 minute read</span>
+    <svg class="icon i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-11-02
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>Scrcpy for a long time has been the best way to record On linux it is pretty simple since scrcpy supports V4L2, however windows is a bit of a different beast, this blog post will cover windows primairly because anyone running linux should be able to trivially figureout the parts they need via v4l2loopback. </p>
+<span id="continue-reading"></span><h2 id="phone-setup">Phone setup</h2>
+<p>Scrcpy now supports recording the camera itself. However due to this being an A12+ only feature, it will not be focused on here, though keep in mind the setup will be the same, just without the need for opencam or filmic.</p>
+<p>There are a couple ways of setting up the phone for this, however when it comes to quality, two methods by far are the best. OpenCam and Filmic, this post will focus on opencam. The quality is still great, even if not quite as good as filmic. However opencam is free and will be the most accsessible, and quality is still great.</p>
+<p>The first thing to do is install opencam, I typically use fdroid opencam, but downloading the apk or using google play store should work fine too. In opencam settings, Click on <code>Onscreen GUI...</code> and sert <code>Immersive mode</code> to <code>Hide everything</code> this will be very important as we will be doing screen recording. </p>
+<p>Now when you back out to the main camera screen and wait a bit, the screen should disappear showing only the camera itself. as far as android stuff goes, we are already done, plug your phone into USB, prop it up on a mount pointed at whatever you please and you are good to go. </p>
+<h2 id="scrcpy-recording">Scrcpy recording</h2>
+<p>Scrcpy does allow us to record to a file directly using;</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>scrcpy -N --stay-awake --turn-screen-off --record-format=mkv --record=filelocation
+</span></code></pre>
+<p>However because it is using ffmpeg under the hood, it also allows us to use other forms of arbitrary recording. So a brief run down of common protocols we could use to achieve this.</p>
+<p>It's important to keep in mind that scrcpy only supports mp4 and mkv containers, so ideally we would work with just one of those. </p>
+<ul>
+<li>named pipes:  sadly these won't work as windows named pipe support is not great at best, and at worst completely unusable</li>
+<li>sockets: also sadly, not an option as windows doesn't really support the type of sockets we can easily use. this isn't a great option</li>
+<li>file descriptors: not really an option here, but for more custom solutions it could be</li>
+<li>http streaming: this could be a potential solution, however without <code>-listen 1</code>, this won't be a very viable solution  as we wont have an http server to work with </li>
+<li>Rtmp: could work with some minimal work on scrcpy's side. it would need us to add FLV streaming support.</li>
+<li>rtp/rtsp: possible solution however muxing other formats into rtp can sometimes cause quality degreddation, so it's not highly reccomended.</li>
+</ul>
+<p>So this leaves us with three real contenders;</p>
+<ul>
+<li>udp: this can work, but has high latency, investigate this</li>
+<li>Rist: A possible solution</li>
+<li>srt: A possible solution</li>
+</ul>
+<p>SRT is one of the most promising solutions, it is both low latency as the video shows, and sadly, the video I record suffers from compression artifacts so I cannot showcase the quality of the stream too, however it is just about excellent. not quite as good as a direct feed. but on windows, we will take what we can get.</p>
+<h5 id="insert-video-here-sorry-haven-t-gotten-around-to-recording-it">INSERT VIDEO HERE (sorry haven't gotten around to recording it)</h5>
+<p>Some other benefits that using SRT offers is fairly easy setup, and expanded codec support, while it won't be beneficial here. keep in mind that SRT + MKV will support all the formats MKV supports. This includes formats like AV1 and Flac. </p>
+<p>So the scrcpy command to record the video and stream it over SRT is below this. There are a couple optimizations we can do such as setting bitrate from the phone to the PC. it's important to set the bitrate to something you can reliably do, go too low and you will get artifacts, go too high and you won't be able to sustain the connection.</p>
+<pre data-lang="ps" style="background-color:#2b303b;color:#c0c5ce;" class="language-ps "><code class="language-ps" data-lang="ps"><span>scrcpy -b100M --stay-awake --turn-screen-off --record-format=mkv --record=&quot;srt://127.0.0.1:9990?mode=caller&amp;transtype=live&amp;latency=0&amp;recv_buffer_size=0&quot;
+</span></code></pre>
+<p>After that inside inside of OBS simply add a new media source, uncheck file and add <code>srt://127.0.0.1:9990?mode=listener&amp;transtype=live&amp;latency=0&amp;recv_buffer_size=0</code> to it. </p>
+<h2 id="conclusion-and-extra-tidbits">Conclusion and extra tidbits</h2>
+<p>With this you should have a fairly low latency, but still high quality feed to OBS. better then droidcam. It is possible this could be better in the future. </p>
+<ul>
+<li>Windows does support named pipes, however they are quite the hassle to deal with. However an avid scripter or programmer could probably get this to work.</li>
+<li>Optimizations inside of scrcpy for quality and latency could be done</li>
+<li>Supporting something like dshow could be a viable solution for scrcpy, as it does support v4l2loopback on linux. </li>
+<li>OBS could support scrcpy as a plugin</li>
+</ul>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://quackdoc.github.io/categories/tutorial/">Tutorial</a>
+                
+                
+                    and
+                    tagged
+                    
+                        <a href="https://quackdoc.github.io/tags/linux/">Linux</a>
+                        
+                            
+                                
+                                    ,
+                                
+                            
+                        
+                    
+                        <a href="https://quackdoc.github.io/tags/windows/">Windows</a>
+                        
+                            
+                                
+                                    and
+                                
+                            
+                        
+                    
+                        <a href="https://quackdoc.github.io/tags/video/">Video</a>
+                        
+                            
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+        <hr>
+          <div>
+          <div w3-include-html="/signature.html"></div>
+          </div>
+        <hr>
+        <script>
+          w3IncludeHTML();
+        </script>
+    </body>
+
+</html>

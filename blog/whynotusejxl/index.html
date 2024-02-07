@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://www.w3schools.com/lib/w3data.js"></script>
+  <script src="/JS/microlight.js"></script>
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="/CSS/simple.css">
+      <link rel="stylesheet" href="/CSS/custom.css">
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <!-- open gragh stuff-->
+      
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="QuacksBlog" />
+      <meta property="og:url" content="https://quackdoc.github.io/blog/" />
+    
+    
+    
+      
+      <title>Why aren&#x27;t we using JXL?</title>
+      <meta property="og:title" content="Why aren&#x27;t we using JXL?" />
+      
+      
+      <!--meta name="description" content="Apparently I wasn&#x27;t done with JXL in the first post, so here is another one." /-->
+      <meta property="og:description" content="Apparently I wasn&#x27;t done with JXL in the first post, so here is another one." />
+      
+     
+  
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+      <div>
+        <header>
+          <nav>
+            <h1 align="center">
+              Quack's Blog
+            </h1>
+            <br/>
+            <ul>
+              <li><a href="/">HomePage</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/about.html">About</a></li>
+            </ul>
+          </nav>
+        </header>
+        <div>
+        
+    
+        
+                
+            
+    
+
+    <header>
+        <h1 itemprop="headline">Why aren&#x27;t we using JXL?</h1>
+        <span class="muted">
+    <svg class="icon i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>8 minute read</span>
+    <svg class="icon i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2024-01-14
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>This is a mini part two in something I didn't think was going to become a series. but I wanted to test this specifically anyways. So here we go.</p>
+<span id="continue-reading"></span><h2 id="i-downloaded-20k-images-from-danbooru">I downloaded 20k images from danbooru.</h2>
+<p>I decided to do a real world test case for JXL. I haven't seen many of these done. I've seen a lot of smaller scale tests which showcase sometimes JXL does great, and sometimes not so much. But I haven't really seen anything actually indicative of how JXL can actually benefit service providers. </p>
+<p>Firstly, why 20k images? I decided this would give a pretty good representation, without being a complete dick. The 20k or so (a little less due to errors) images came out to 34.69 GiB total.</p>
+<p>It's really not good etiquete to do something like this, and any more images, say 60k I would rather get an OK for someone first, since I had already downloaded 34Gb of data over a couple minutes. I decided roughly 20k was enough images. Throttling my download speed would be fine too but I still would rather show good ettiqute.</p>
+<p>So how did I do this? It's really simple to replicate. Below is a script you can use to test this out for yourself.</p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#65737e;">#!/bin/bash
+</span><span style="color:#65737e;">## Tools Needed;
+</span><span style="color:#65737e;">## imageboard_downloader https://github.com/FerrahWolfeh/imageboard-downloader-rs
+</span><span style="color:#65737e;">### If cargo is installed, compile and install with cargo install --git https://github.com/FerrahWolfeh/imageboard-downloader-rs
+</span><span style="color:#65737e;">## GNU Parallel https://www.gnu.org/software/parallel/
+</span><span>
+</span><span style="color:#bf616a;">mkdir -p</span><span> jpg
+</span><span style="color:#bf616a;">mkdir -p</span><span> jpg-jxl
+</span><span style="color:#bf616a;">mkdir -p</span><span> png
+</span><span style="color:#bf616a;">mkdir -p</span><span> png-jxl
+</span><span>
+</span><span style="color:#65737e;">## Download Images
+</span><span style="color:#65737e;">## &quot;-animated&quot; to remove gifs and videos
+</span><span>
+</span><span style="color:#bf616a;">imageboard_downloader</span><span> search</span><span style="color:#bf616a;"> -i</span><span> danbooru</span><span style="color:#bf616a;"> -d</span><span> 10</span><span style="color:#bf616a;"> -l</span><span> 20000</span><span style="color:#bf616a;"> -o</span><span> ./dls</span><span style="color:#bf616a;"> --id</span><span> -- &quot;</span><span style="color:#a3be8c;">-animated</span><span>&quot;
+</span><span>
+</span><span style="color:#bf616a;">mv</span><span> dls/*.jpg jpg/
+</span><span style="color:#bf616a;">mv</span><span> dls/*.jpeg jpg/
+</span><span style="color:#bf616a;">mv</span><span> dls/*.png png/
+</span><span>
+</span><span style="color:#65737e;">## change -j ${JOBS}
+</span><span style="color:#bf616a;">ls</span><span> png/  | </span><span style="color:#bf616a;">parallel -j</span><span> 6 cjxl</span><span style="color:#bf616a;"> -e</span><span> 4</span><span style="color:#bf616a;"> -d</span><span> 0</span><span style="color:#bf616a;"> --num_threads</span><span> 1 png/{} png-jxl/{.}.jxl
+</span><span style="color:#bf616a;">ls</span><span> jpg/ | </span><span style="color:#bf616a;">parallel -j</span><span> 8 cjxl</span><span style="color:#bf616a;"> -e</span><span> 6</span><span style="color:#bf616a;"> -d</span><span> 0</span><span style="color:#bf616a;"> --num_threads</span><span> 1 jpg/{} jpg-jxl/{.}.jxl
+</span></code></pre>
+<p>A nice simple script. We don't want to download any animated pictures like gifs, or any video's since it doesn't really help out what we need for this. I use <code>-e 4</code> for encoding the PNGs since I want my ryzen 2600 to have a fighting chance at encoding these at any reasonable speeds. I also only have 16g of ram and need to use my PC for doing other things at the same time. You can get better results then I did by increasing the effort, but for lossless I think <code>-e 4</code> is a good benchmark.</p>
+<p>When encoding the Jpeg images we can afford to use a much higher effort since we are by default using lossless jpeg transcoding which is extremely fast and efficient. Any more then <code>-e 6</code> however and the gains you see are minimal at best so it's best to just leave it here IMO. So, how did we come out? Below is the before and after of the roughly 20k images.</p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#bf616a;">➜</span><span>  booru-test dua png jpg   
+</span><span>  </span><span style="color:#bf616a;">15.69</span><span> GiB png
+</span><span>  </span><span style="color:#bf616a;">18.97</span><span> GiB jpg
+</span><span>  </span><span style="color:#bf616a;">34.66</span><span> GiB total
+</span><span style="color:#bf616a;">➜</span><span>  booru-test dua png-jxl jpg-jxl
+</span><span>   </span><span style="color:#bf616a;">9.63</span><span> GiB png-jxl
+</span><span>  </span><span style="color:#bf616a;">15.10</span><span> GiB jpg-jxl
+</span><span>  </span><span style="color:#bf616a;">24.73</span><span> GiB total
+</span></code></pre>
+<p>It's also important to check how many errors we ran into, Not all files can always be decoded, sometimes it will error out so we can quickly check the file counts, and yup, not enough errors to be a massive issues.</p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#bf616a;">➜</span><span>  booru-test ls png-jxl | </span><span style="color:#bf616a;">wc -l </span><span>&amp;&amp; </span><span style="color:#bf616a;">ls</span><span> png | </span><span style="color:#bf616a;">wc -l                                         
+</span><span style="color:#bf616a;">4774
+</span><span style="color:#bf616a;">4776
+</span><span style="color:#bf616a;">➜</span><span>  booru-test ls jpg-jxl | </span><span style="color:#bf616a;">wc -l </span><span>&amp;&amp; </span><span style="color:#bf616a;">ls</span><span> jpg | </span><span style="color:#bf616a;">wc -l
+</span><span style="color:#bf616a;">14559
+</span><span style="color:#bf616a;">14560
+</span></code></pre>
+<p>This may not be the most impressive numbers we have ever seen. We can clearly see PNG gave us a great size savings, while JPG didn't give us too much. PNG saved us around <code>39%</code> of filesize at <code>e4</code> and jpg at <code>e6</code> saved us about <code>15%</code> of filesize. This is slightly more impressive when we realize we lost pretty much nothing (besides browser support which is the topic of this post) in exchange. We still have fast decode times, we still have progressive decoding (unlike some other image formats) and this is <em>entirely lossless</em>. Not a single image (except those that failed to decode for one reason or another) was a lossy encode.</p>
+<p>Even judging just the jpeg benefits. If you are a provider, this is 15% filesize and bandwidth savings. 15% file size may not sound like a lot, but 15% bandwidth is quite the savings for a lot of services. For services that self host and have bandwidth speed cap, this is 15% less traffic clogging your pipes. A direct benefit to the total speed your users can experience. If you pay for bandwidth. Well it speaks for itself.</p>
+<h2 id="well-that-s-neat-why-aren-t-we-using-this">Well that's neat. Why aren't we using this?</h2>
+<p>This is a great question. You may have noticed I didn't even touch on lossy JXL. Why? In my opinion, Lossless JXL itself is a large enough benefit to warrent inclusion in the modern browser landscape. We don't need any flawed metrics to compare visual fidelity. These are 1:1 comparisons with no data loss.</p>
+<p>However the team working on chromium preformed a massively flawed test in where they compared AVIF to JXL using a massively at the time out of date libjxl where avif got better decode preformance. When comparing image fidelity, they choose to showcase MS-SSIM which regularly outpreformed JXL vs other metrics they had which often preformed in favour of JXL but usually more balanced weighing JXL and AVIF similarly.</p>
+<p>They often compared single thread and eight threaded workloads, but nothing inbetween. </p>
+<p>Despite this flawed testing methodology Apple has integrated JXL support in their products, and a significant amount of internet traffic advertises JXL support. This is from Jon Sneyers on the JXL discord </p>
+<blockquote>
+<p>November 21:
+13.92% of Cloudinary image requests came from a user agent supporting jxl (2.8 billion out of 20.1 billion images served that day)</p>
+</blockquote>
+<blockquote>
+<p>December 5: 
+19.52% of Cloudinary image requests came from a user agent supporting jxl (3.1 billion out of 15.7 billion images served that day)</p>
+</blockquote>
+<p>As we can see nearly 20% of their traffic now is advertises JXL support. This is roughly in line with exptectations as gs.statcounter reports IOS to account for a total around 28% of total mobile market share. And with how significant mobile internet usage is on the global scale now, this means JXL compatible devices account for a significant amount of marketshare.</p>
+<p>Recently we were even shared a small chart showing JXL enabled traffic from cloudinary, You can see the chart below, where it currently sits about 20% traffic. Shopify actively serves JXL to supported clients. If they have similar statistics that would mean about 20% of their mobile traffic gets JXL images.</p>
+<p><img src="https://files.catbox.moe/tcmd4f.png" alt="cloudinary chart" /></p>
+<p>For android devices, we do at least have freedom, we can install a JXL compatible browser, and a JXL compatible gallery app. However that will only go so far as being compatible with those specific apps. It is no platform support sadly. Custom roms may implement support for JXL, but well... That's still just custom roms.</p>
+<p>In the end, Chrome and Android support are the final barriers. Firefox... well does anyone actually care what they do anymore? Once chrome and Android support JXL. The vast majority of applications people at mass use will support it. How can you get involved? It's easy, Ask on the forums for your devices for JXL support. If you find webpages that use JXL like my previous entry, you can report those webpages as broken to chrome.</p>
+<h2 id="why-not-talk-about-lossy-jxl">Why not talk about lossy JXL?</h2>
+<p>I am very hesitant to talk about JXL, First and foremost, for those who really want to know, let me show you the results of running <code>cjxl -e6 -d 0.5</code> on the folder. These are the file sizes down below.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>booru-test dua png png-jxl-loss 
+</span><span>   3.02 GiB png-jxl-loss
+</span><span>  15.69 GiB png
+</span><span>  18.71 GiB total
+</span></code></pre>
+<p>Now, Why don't I want to talk about lossy? I don't want to get caught in the inevitable trap of talking about metrics. Metrics are quite an intensly debated topic, and I could talk great about one metric, or talk crap about another one, and always upset someone. Each metric has it's flaws. and quite honestly i don't want to spend a week testing every single metric I can find. <code>-d 0.5</code> is a distance which is considered &quot;Visually lossless&quot; by many and this is the only reason why I am showcasing it here, it is fairly uncontroversial. I can't tell a difference, and this is how I encode all of my pictures, Camera shots, Downloaded pictures, Comics and manga. Doesn't matter, If I don't need lossless, I save it using <code>-e 0.5</code>. I typically bump the effort to <code>-e 8</code> for my own content, but <code>-e 6</code> might be considered a more safe estimate for what people would actually want to encode it with if you are running a service. As you can see, JXL is smaller, there really isn't any surprise here. You get your progressive decoding for web delivery, The benefits I talked about in the other article so on and so forth.</p>
+<p>Without running a comprehensive comparison against AVIF, WEBP, and Jpeg. IMO there really isn't any point in talking about lossy jxl, And I believe the merits of lossless JXL to be more then enough to prove Jpeg-XL's worth in the modern market.</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://quackdoc.github.io/categories/tech-showcase/">Tech Showcase</a>
+                
+                
+                    and
+                    tagged
+                    
+                        <a href="https://quackdoc.github.io/tags/images/">Images</a>
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+        <hr>
+          <div>
+          <div w3-include-html="/signature.html"></div>
+          </div>
+        <hr>
+        <script>
+          w3IncludeHTML();
+        </script>
+    </body>
+
+</html>
